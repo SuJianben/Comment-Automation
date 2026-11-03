@@ -15,6 +15,7 @@ def sync_products(config, full=False, client=None):
         previous = cache.watermark(config.domain)
         full = full or previous is None
         # An overlap helps with indexing delay; the upsert makes rereads harmless.
+        polled_at = datetime.now(timezone.utc).isoformat(timespec="microseconds")
         start = datetime.now(timezone.utc) - timedelta(minutes=5)
         watermark = start.strftime("%Y-%m-%dT%H:%M:%SZ")
         if previous and watermark < previous:
@@ -25,6 +26,7 @@ def sync_products(config, full=False, client=None):
         count = 0
         for product in client.products(search):
             cache.apply(config.domain, product)
+            cache.record_poll(config.domain, product, polled_at)
             count += 1
         cache.db.execute("INSERT INTO sync_state VALUES (?, ?) ON CONFLICT(store) DO UPDATE SET watermark=excluded.watermark", (config.domain, watermark))
         cache.db.commit()

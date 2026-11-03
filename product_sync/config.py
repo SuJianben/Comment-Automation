@@ -3,6 +3,14 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# Read the local private configuration independently of the working directory.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=False)
+
+
+DEFAULT_SHOPIFY_STORE_DOMAIN = "rvfiyy-r2.myshopify.com"
+
 
 @dataclass(frozen=True)
 class Config:
@@ -16,7 +24,7 @@ class Config:
 
     @classmethod
     def from_env(cls):
-        domain = os.environ.get("SHOPIFY_STORE_DOMAIN", "").strip().lower()
+        domain = os.environ.get("SHOPIFY_STORE_DOMAIN", DEFAULT_SHOPIFY_STORE_DOMAIN).strip().lower()
         token = os.environ.get("SHOPIFY_API_TOKEN", "").strip()
         version = os.environ.get("SHOPIFY_API_VERSION", "2026-07").strip()
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]*\.myshopify\.com", domain):
