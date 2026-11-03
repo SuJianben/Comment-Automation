@@ -24,8 +24,8 @@ def main():
     email_domain = os.environ.get('DEFAULT_EMAIL_DOMAIN', '')
     limit = int(os.environ.get('WORKER_DAILY_LIMIT', '2'))
     interval = int(os.environ.get('WORKER_INTERVAL_SECONDS', '60'))
-    if not 1 <= limit <= 2 or interval < 60:
-        parser.error('WORKER_DAILY_LIMIT 必须是 1 或 2，WORKER_INTERVAL_SECONDS 必须至少为 60')
+    if not 1 <= limit <= 50 or interval < 10:
+        parser.error('WORKER_DAILY_LIMIT 必须是 1 或 50，WORKER_INTERVAL_SECONDS 必须至少为 10')
 
     def job():
         try:
